@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import { ColorModeContext, useMode } from "./theme";  
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import Topbar from "./scenes/global/Topbar";
+import Dashboard from "./scenes/dashboard";
+import { Routes, Route } from "react-router-dom";
+import Sidebar from "./scenes/global/Sidebar";
+
+import Vans from "./scenes/van";
+import Partners from "./scenes/partner";  
+import Contractors from "./scenes/contractor";
+import Roles from "./scenes/role";
+import JobTypes from "./scenes/jobType";
+import Job from "./scenes/job";
+import JobCategories from "./scenes/jobCategory";
+import RoleRates from "./scenes/roleRate";
+import ContractorRates from "./scenes/contractorRate";
 
 function App() {
+
+  const [theme, colorMode] = useMode();
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div className="app">
+          <Sidebar/>
+          <main className="content">
+            <Topbar />
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/van" element={<Vans />} />
+              <Route path="/partner" element={<Partners />} />
+              <Route path="/contractor" element={<Contractors />} />
+              <Route path="/role" element={<Roles />} />
+              <Route path="/jobType" element={<JobTypes />} />
+              <Route path="/job" element={<Job />} />
+              <Route path="/jobCategory" element={<JobCategories />} />
+              <Route path="/roleRate" element={<RoleRates />} />
+              <Route path="/contractorRate" element={<ContractorRates />} />
+            </Routes>
+          </main>
+        </div>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
+
 
 export default App;
