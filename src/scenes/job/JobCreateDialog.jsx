@@ -29,7 +29,13 @@ const JobCreateDialog = ({
   colors,
 }) => {
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    <Dialog open={open} 
+  //  onClose={handleClose} 
+    onClose={(_, reason) => {
+    if (reason === "backdropClick") return; // Ignore backdrop clicks
+    handleClose();
+  }}
+    fullWidth maxWidth="md">
       <DialogTitle>Create New Job</DialogTitle>
       <Formik
         initialValues={initialValues}
@@ -185,8 +191,8 @@ const JobCreateDialog = ({
                 {/* Contractors with Pay */}
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                   {values.contractors.map((contractor, index) => (
-                    <>
-                      <Grid item size={3} key={index} spacing={2}>
+                    <Grid container size = {6} display={'flex'} key={contractor.id || index}>
+                      <Grid item size={6}>
                         <TextField
                           select
                           fullWidth
@@ -204,7 +210,7 @@ const JobCreateDialog = ({
                           ))}
                         </TextField>
                       </Grid>
-                      <Grid item size={2} key={index} spacing={2}>
+                      <Grid item size={4} >
                         <TextField
                           label="Pay"
                           fullWidth
@@ -216,7 +222,7 @@ const JobCreateDialog = ({
                           // sx={{ width: "30%" }}
                         />
                       </Grid>
-                      <Grid item size={1} key={index} spacing={2}>
+                      <Grid item size={2}>
                         {/* Remove contractor */}
                         <IconButton
                           variant="outlined"
@@ -248,7 +254,7 @@ const JobCreateDialog = ({
                           <DeleteIcon />
                         </IconButton>
                       </Grid>
-                    </>
+                    </Grid>
                   ))}
                 </Grid>
               </Box>

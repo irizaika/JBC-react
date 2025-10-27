@@ -49,6 +49,28 @@ const Job = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
 
+    const [copiedJob, setCopiedJob] = useState(null);
+  
+  const handleCopy = (job) => {
+    const { date, id, ...rest } = job;
+    setCopiedJob(rest);  // Save job without date/id
+  };
+  
+  const handlePaste = (date) => {
+    if (!copiedJob) return;
+  
+    const newJob = {
+      ...copiedJob,
+      date,          // Apply new date
+      id: undefined, // New job will be created fresh
+    };
+
+     setSelectedJob(newJob);
+     setSelectedDate(dayjs(date).format("YYYY-MM-DD"));
+     crud.handleOpenEdit(newJob);
+  };
+  
+
   const api = {
     getAll: getJobsByRange,
     create: createJob,
@@ -156,6 +178,8 @@ const Job = () => {
           jobTypesList={jobTypes}
           vanList={vanListLookup}
           contractorList={contractorListLookup}
+          onCopy={handleCopy} 
+          onPaste={handlePaste}  
           onAdd={(date) => {
             setSelectedJob(null);
             setSelectedDate(dayjs(date).format("YYYY-MM-DD"));

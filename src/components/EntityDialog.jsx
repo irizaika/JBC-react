@@ -44,7 +44,13 @@ const EntityDialog = ({
   const validationSchema = buildValidationSchema(fields);
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+    <Dialog open={open} 
+   // onClose={handleClose}
+    onClose={(_, reason) => {
+    if (reason === "backdropClick") return; // Ignore backdrop clicks
+    handleClose();
+  }}
+     fullWidth maxWidth="sm">
       <DialogTitle>{isEdit ? `Edit ${title}` : `Add New ${title}`}</DialogTitle>
       <Formik
         initialValues={initialValues}
