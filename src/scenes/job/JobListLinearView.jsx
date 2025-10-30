@@ -45,7 +45,7 @@ export default function JobListLinearView({
 
   return (
     <Stack spacing={0.5} sx={{ mt: 2,
-      maxHeight: "75vh",      // Or "100vh" if you want full screen height
+      maxHeight: "75vh",      // Or "100vh" - full screen height
       overflowY: "auto",      // Enables vertical scroll
       overflowX: "hidden",
       pr: 1,                  // Avoids scrollbar overlapping content

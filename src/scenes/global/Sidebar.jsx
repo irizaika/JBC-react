@@ -212,6 +212,20 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             ></Item>
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Reports
+            </Typography>
+            <Item
+              title="Partner report"
+              to="/partnerDonutReport"
+              icon={<AssignmentIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            ></Item>
           </Box>
         </Menu>
       </ProSidebar>

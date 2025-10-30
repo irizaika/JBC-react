@@ -3,8 +3,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { isWeekend, formatPay } from "../../utils/jobComponentUtils";
 import CopyAll from '@mui/icons-material/CopyAll';
+import { toLookupMap } from "../../utils/mapHelper";
 
 export default function JobCard({ job, date, colors, jobTypesList, partnersList, vanList, contractorList, onEdit, onDelete, onCopy }) {
+
   return (
     <Box
       sx={{

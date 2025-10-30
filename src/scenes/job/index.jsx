@@ -37,9 +37,11 @@ const Job = () => {
 
   const [partners, setPartners] = useState([]);
   const [partnersFormatted, setPartnersFormatted] = useState([]);
+  const [fullJobTypes, setFullJobTypes] = useState([]);
   const [jobTypes, setJobTypes] = useState([]);
   const [jobTypesFormatted, setJobTypesFormatted] = useState([]);
 
+  const [fullContractorList, setFullContractorList] = useState([]);
   const [contractorList, setContractorList] = useState([]);
   const [contractorListLookup, setContractorListLookup] = useState([]);
   const [vanList, setVanList] = useState([]);
@@ -102,6 +104,7 @@ const Job = () => {
         const jobTypes = await getJobTypes();
         setJobTypesFormatted(toSelectOptions(jobTypes, "id", "name"));
         setJobTypes(toLookupMap(jobTypes, "id", "name"));
+        setFullJobTypes(jobTypes);
       } catch (error) {
         console.error("Failed to load job types:", error);
       }
@@ -117,6 +120,7 @@ const Job = () => {
         const contarctors = await getContractors();
         setContractorList(toSelectOptions(contarctors, "id", "name", false));
         setContractorListLookup(toLookupMap(contarctors, "id", "name", false));
+        setFullContractorList(contarctors);
       } catch (error) {
         console.error("Failed to load contactrs:", error);
       }
@@ -252,8 +256,10 @@ const Job = () => {
           }
         }
         jobTypes={jobTypesFormatted}
+        fullJobTypes={fullJobTypes}
         partners={partnersFormatted}
         contractors={contractorList}
+        fullContractors={fullContractorList}
         vans={vanList}
         colors={colors}
       />

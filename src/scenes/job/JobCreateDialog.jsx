@@ -23,11 +23,16 @@ const JobCreateDialog = ({
   loading,
   initialValues,
   jobTypes,
+  fullJobTypes,
   partners,
   contractors,
+  fullContractors,
   vans,
   colors,
 }) => {
+
+
+
   return (
     <Dialog open={open} 
   //  onClose={handleClose} 
@@ -44,7 +49,64 @@ const JobCreateDialog = ({
           setSubmitting(false);
         }}
       >
-        {({ values, handleChange, setFieldValue }) => (
+
+        {({ values, handleChange, setFieldValue }) => {
+          // ✅ When job type changes, auto-fill payReceived
+          const handleJobTypeChange = (e) => {
+            const selectedId = e.target.value;
+            handleChange(e);
+
+            const jobType = fullJobTypes.find((j) => j.id === selectedId);
+            // Auto-fill payReceived if defined
+            if (jobType && jobType.payRate) {
+              setFieldValue("payReceived", jobType.payRate);
+            }
+            else {
+              setFieldValue("payReceived", 0);
+            }
+            // Also auto-fill partnerId if defined
+            if (jobType && jobType.partnerId) {
+              setFieldValue("partnerId", jobType.partnerId);
+            }
+            else {
+              setFieldValue("partnerId", null);
+            }
+          };
+
+          // ✅ When contractor changes, auto-fill contractor pay
+          const handleContractorChange = (e, index) => {
+            const contractorId = e.target.value;
+            handleChange(e);
+
+            const contractor = fullContractors.find((c) => c.id === contractorId);
+            const jobTypeId = values.jobTypeId;
+
+            let defaultPay = 0;
+
+            if (contractor) {
+              // Prefer rate for this job type
+              if (contractor.contractorRates && contractor.contractorRates[jobTypeId]) {
+                defaultPay = contractor.contractorRates[jobTypeId];
+              }
+              // Or fallback to base rate
+              else if (contractor.roleRates && contractor.roleRates[jobTypeId]) {
+                defaultPay = contractor.roleRates[jobTypeId];
+              }
+              else
+              {
+                defaultPay = 0;
+              }
+            }
+
+            const updated = [...values.contractors];
+          //  updated[index].pay = defaultPay;
+            updated[index] = { ...updated[index], pay: defaultPay, contractorId: contractorId };
+            setFieldValue("contractors", updated);
+          };
+
+          
+          return (
+
           <Form>
             <DialogContent>
               <Box sx={{ flexGrow: 1}}>
@@ -70,7 +132,7 @@ const JobCreateDialog = ({
                       label="Job Type"
                       name="jobTypeId"
                       value={values.jobTypeId}
-                      onChange={handleChange}
+                      onChange={handleJobTypeChange}
                     >
                       {jobTypes.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -109,10 +171,11 @@ const JobCreateDialog = ({
                     <TextField
                       fullWidth
                       select
-                      label="Partner"
+                      label={values.partnerId ? "" : "Partner"}
                       name="partnerId"
                       value={values.partnerId}
                       onChange={handleChange}
+                      disabled={Boolean(values.partnerId)}
                     >
                       {partners.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -199,7 +262,7 @@ const JobCreateDialog = ({
                           label="Contractor"
                           name={`contractors[${index}].contractorId`}
                           value={contractor.contractorId}
-                          onChange={handleChange}
+                          onChange={(e) => handleContractorChange(e, index)}
                           spacing={2}
                           // sx={{ width: "50%" }}
                         >
@@ -272,6 +335,7 @@ const JobCreateDialog = ({
             </DialogActions>
           </Form>
         )}
+        }
       </Formik>
     </Dialog>
   );
