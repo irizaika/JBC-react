@@ -30,7 +30,7 @@ const EntityTable = ({ title, subtitle, rows, columns, onAdd, colors }) => {
       {/* DataGrid */}
       <Box
         mt="20px"
-        height="80vh"
+        height="77vh"
         sx={{
           "& .MuiDataGrid-root": { border: "none" },
           "& .MuiDataGrid-cell": { borderBottom: "none" },

@@ -26,14 +26,15 @@ import { getVans } from "../../services/vanService";
 dayjs.extend(isoWeek);
 dayjs.locale("en-gb"); // UK locale, week starts on Monday
 
-const Job = () => {
+const Job = ({isDashboard = false}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
  // const navigate = useNavigate();
+  const today = dayjs();
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(isDashboard ? today : null);
+  const [endDate, setEndDate] = useState(isDashboard ? today : null);
 
   const [partners, setPartners] = useState([]);
   const [partnersFormatted, setPartnersFormatted] = useState([]);
@@ -51,7 +52,8 @@ const Job = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
 
-    const [copiedJob, setCopiedJob] = useState(null);
+  const [copiedJob, setCopiedJob] = useState(null);
+  const [isEdit, setIsEdit] = useState(true);
   
   const handleCopy = (job) => {
     const { date, id, ...rest } = job;
@@ -171,10 +173,11 @@ const Job = () => {
 
   return (
     <Box>
-      <Grid sx={{ p: 2 }}>
-        
-        <DateRangeSelector onChange={handleDateRangeChange} />
-        
+      <Grid sx={{ p: isDashboard ? 0 : 2 }}>
+
+        {/*for dashboard we display todays jobs, datepickers not needed*/}
+        {!isDashboard && <DateRangeSelector onChange={handleDateRangeChange} />} 
+
         <JobListLinearView
           // jobsByDate={jobsByDate}
           jobsByDate={jobs}
@@ -182,21 +185,22 @@ const Job = () => {
           jobTypesList={jobTypes}
           vanList={vanListLookup}
           contractorList={contractorListLookup}
-          onCopy={handleCopy} 
-          onPaste={handlePaste}  
+          onCopy={handleCopy}
+          onPaste={handlePaste}
           onAdd={(date) => {
+            setIsEdit(false);
             setSelectedJob(null);
             setSelectedDate(dayjs(date).format("YYYY-MM-DD"));
             crud.handleOpenAdd();
           }}
           onEdit={(job) => {
+            setIsEdit(true);
             setSelectedJob(job);
             setSelectedDate(dayjs(job.date).format("YYYY-MM-DD"));
             crud.handleOpenEdit(job);
           }}
-          //           onAdd={(date) => navigate(`/jobs/new?date=${date}`)}
-          // onEdit={(job) => navigate(`/jobs/edit/${job.id}`)}
           onDelete={(job) => crud.handleDelete(job)} // to do add confirmation
+          isDashboard={isDashboard}
         />
       </Grid>
 
@@ -262,6 +266,7 @@ const Job = () => {
         fullContractors={fullContractorList}
         vans={vanList}
         colors={colors}
+        isEdit={isEdit}
       />
     </Box>
   );

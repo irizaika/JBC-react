@@ -6,6 +6,9 @@ import {
   Stack,
   useTheme,
   Divider,
+  Checkbox,
+  Typography,
+  FormControlLabel
 } from "@mui/material";
 import { tokens } from "../../theme";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -57,22 +60,23 @@ export default function DateRangeSelector({ onChange }) {
 
   const [startDate, setStartDate] = useState(dayjs().subtract(7, "day"));
   const [endDate, setEndDate] = useState(dayjs());
+  const [combineNoPartner, setCombineNoPartner] = useState(true);
 
   const handleShortcutClick = (getValue) => {
     const [start, end] = getValue();
     setStartDate(start);
     setEndDate(end);
-    if (onChange) onChange([start, end]);
+    if (onChange) onChange([start, end, combineNoPartner]);
   };
 
   const handleStartChange = (newValue) => {
     setStartDate(newValue);
-    if (onChange) onChange([newValue, endDate]);
+    if (onChange) onChange([newValue, endDate, combineNoPartner]);
   };
 
   const handleEndChange = (newValue) => {
     setEndDate(newValue);
-    if (onChange) onChange([startDate, newValue]);
+    if (onChange) onChange([startDate, newValue, combineNoPartner]);
   };
 
   return (
@@ -82,7 +86,7 @@ export default function DateRangeSelector({ onChange }) {
         alignItems="center"
         justifyContent="flex-start"
         flexWrap="wrap"
-       // gap={2}
+        // gap={2}
         sx={{
           p: 2,
           mr: 1, // space from right edge works better than gap here
@@ -105,7 +109,7 @@ export default function DateRangeSelector({ onChange }) {
                   width: 160,
                   "& .MuiOutlinedInput-root": {
                     "& fieldset": {
-                      borderColor: colors.sageGreen[400]
+                      borderColor: colors.sageGreen[400],
                     },
                     "&:hover fieldset": {
                       borderColor: colors.sageGreen[500],
@@ -114,14 +118,14 @@ export default function DateRangeSelector({ onChange }) {
                       borderColor: colors.burntOrange[400],
                     },
                     input: {
-                      color: colors.grey[100]
+                      color: colors.grey[100],
                     },
                   },
                   "& .MuiInputLabel-root": {
-                    color: colors.grey[300]
+                    color: colors.grey[300],
                   },
                   "& .MuiSvgIcon-root": {
-                    color: colors.grey[100]
+                    color: colors.grey[100],
                   },
                 },
               },
@@ -138,7 +142,7 @@ export default function DateRangeSelector({ onChange }) {
                   width: 160,
                   "& .MuiOutlinedInput-root": {
                     "& fieldset": {
-                      borderColor: colors.sageGreen[400]
+                      borderColor: colors.sageGreen[400],
                     },
                     "&:hover fieldset": {
                       borderColor: colors.sageGreen[500],
@@ -147,14 +151,14 @@ export default function DateRangeSelector({ onChange }) {
                       borderColor: colors.burntOrange[400],
                     },
                     input: {
-                      color: colors.grey[100]
+                      color: colors.grey[100],
                     },
                   },
                   "& .MuiInputLabel-root": {
-                    color: colors.grey[300]
+                    color: colors.grey[300],
                   },
                   "& .MuiSvgIcon-root": {
-                    color: colors.grey[100]
+                    color: colors.grey[100],
                   },
                 },
               },
@@ -179,12 +183,11 @@ export default function DateRangeSelector({ onChange }) {
                 backgroundColor: colors.primary[400],
                 color: colors.grey[100],
                 fontSize: "0.7rem",
-              //  fontWeight: "bold",
+                //  fontWeight: "bold",
                 textTransform: "none",
                 px: 1.5,
                 py: 0.5,
                 "&:hover": {
-              //    backgroundColor: colors.primary[400],
                   color: colors.burntOrange[500],
                 },
               }}
@@ -193,6 +196,24 @@ export default function DateRangeSelector({ onChange }) {
             </Button>
           ))}
         </Stack>
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{ borderColor: colors.grey[400], mx: 1 }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={combineNoPartner}
+              onChange={(e) => {
+                const newValue = e.target.checked;
+                setCombineNoPartner(newValue);
+                if (onChange) onChange([startDate, endDate, newValue]); 
+              }}
+            />
+          }
+          label="Combine custom jobs"
+        />
       </Box>
     </LocalizationProvider>
   );

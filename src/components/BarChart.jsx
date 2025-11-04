@@ -2,7 +2,7 @@ import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
 
-const BarChart = ({ data = [], isDashboard = false }) => {
+export default function BarChart ({ data = [], keys =[], indexBy="" }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -14,37 +14,47 @@ const BarChart = ({ data = [], isDashboard = false }) => {
         axis: {
           domain: {
             line: {
-              stroke: colors.grey[100],
+              stroke: colors.grey[600],
             },
           },
           legend: {
             text: {
-              fill: colors.grey[100],
+              fill: colors.grey[200],
             },
           },
           ticks: {
             line: {
-              stroke: colors.grey[100],
+              stroke: colors.grey[600],
               strokeWidth: 1,
             },
             text: {
-              fill: colors.grey[100],
+              fill: colors.grey[200],
             },
           },
         },
         legends: {
           text: {
-            fill: colors.grey[100],
+            fill: colors.grey[200],
           },
         },
+        tooltip: {
+          container: {
+            background: colors.primary[400],
+            color: colors.grey[100],
+            fontSize: 14,
+            borderRadius: 6,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+          },
+        }
       }}
-      keys={["hot dog", "burger", "sandwich", "kebab", "fries", "donut"]}
-      indexBy="country"
+      keys={keys}
+      
+      indexBy={indexBy}
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
       padding={0.3}
       valueScale={{ type: "linear" }}
       indexScale={{ type: "band", round: true }}
-      colors={{ scheme: "nivo" }}
+      colors={{ scheme: "nivo"}}
       defs={[
         {
           id: "dots",
@@ -69,13 +79,14 @@ const BarChart = ({ data = [], isDashboard = false }) => {
         from: "color",
         modifiers: [["darker", "1.6"]],
       }}
-      axisTop={null}
+      //axisTop={null}
+      axisBottom={null}
       axisRight={null}
-      axisBottom={{
+      axisTop={{
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "country", // changed
+        legend: indexBy,//isDashboard ? undefined : "country", // changed
         legendPosition: "middle",
         legendOffset: 32,
       }}
@@ -83,17 +94,18 @@ const BarChart = ({ data = [], isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "food", // changed
+        legend: undefined, //isDashboard ? undefined : "food", // changed
         legendPosition: "middle",
         legendOffset: -40,
       }}
-      enableLabel={false}
+      enableLabel={true}
       labelSkipWidth={12}
       labelSkipHeight={12}
       labelTextColor={{
         from: "color",
         modifiers: [["darker", 1.6]],
       }}
+      
       legends={[
         {
           dataFrom: "keys",
@@ -108,12 +120,14 @@ const BarChart = ({ data = [], isDashboard = false }) => {
           itemDirection: "left-to-right",
           itemOpacity: 0.85,
           symbolSize: 20,
+
           effects: [
             {
               on: "hover",
               style: {
-                itemOpacity: 1,
-              },
+                itemOpacity: 0.5,
+                
+              }
             },
           ],
         },
@@ -124,6 +138,4 @@ const BarChart = ({ data = [], isDashboard = false }) => {
       }}
     />
   );
-};
-
-export default BarChart;
+}

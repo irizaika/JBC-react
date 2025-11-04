@@ -14,7 +14,8 @@ import Job from "./scenes/job";
 import JobCategories from "./scenes/jobCategory";
 import RoleRates from "./scenes/roleRate";
 import ContractorRates from "./scenes/contractorRate";
-import PartnersJobReport from "./scenes/partnerDonutReport";
+import PartnersJobReport from "./scenes/reports/partnerReports";
+import ContractorReport from "./scenes/reports/contractorReport";
 function App() {
 
   const [theme, colorMode] = useMode();
@@ -38,7 +39,8 @@ function App() {
               <Route path="/jobCategory" element={<JobCategories />} />
               <Route path="/roleRate" element={<RoleRates />} />
               <Route path="/contractorRate" element={<ContractorRates />} />
-              <Route path="/partnerDonutReport" element={<PartnersJobReport />} />
+              <Route path="/partnerReport" element={<PartnersJobReport />} />
+              <Route path="/contractorReport" element={<ContractorReport />} />
             </Routes>
           </main>
         </div>

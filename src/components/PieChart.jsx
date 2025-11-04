@@ -2,7 +2,7 @@ import { ResponsivePie } from "@nivo/pie";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 
-const PieChart = ({ data }) => {
+export default function PieChart({ data }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -56,6 +56,4 @@ const PieChart = ({ data }) => {
       // ]}
     />
   );
-};
-
-export default PieChart;
+}

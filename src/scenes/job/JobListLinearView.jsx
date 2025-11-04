@@ -23,6 +23,7 @@ export default function JobListLinearView({
   onAdd,
   onEdit,
   onDelete,
+  isDashboard = false,
 }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -44,12 +45,36 @@ export default function JobListLinearView({
 
 
   return (
-    <Stack spacing={0.5} sx={{ mt: 2,
-      maxHeight: "75vh",      // Or "100vh" - full screen height
-      overflowY: "auto",      // Enables vertical scroll
-      overflowX: "hidden",
-      pr: 1,                  // Avoids scrollbar overlapping content
-     }}>
+    // <Stack spacing={0.5} sx={{
+    //     mt: isDashboard ? 0 : 2,
+    //     maxHeight: isDashboard ? "45vh" : "75vh",
+    //   overflowY: "auto",      // Enables vertical scroll
+    //   overflowX: "hidden",
+    //   pr: 1,                  // Avoids scrollbar overlapping content
+    //  }}>
+
+    <Stack
+      spacing={0.5}
+      sx={{
+        mt: isDashboard ? 0 : 2,
+        ...(isDashboard
+          ? {
+              // Dashboard mode — fit inside container, no scroll
+              maxHeight: "unset",
+              maxWidth: "inherit",
+              overflow: "visible",
+              height: "auto",
+              p: 0,
+            }
+          : {
+              // Normal jobs page
+              maxHeight: "75vh",
+              overflowY: "auto",
+              overflowX: "hidden",
+              pr: 1,
+            }),
+      }}
+    >
       {dateKeys.map((date) => {
         // normalize jobs array
         const rawJobs = Array.isArray(jobsByDate[date]) ? jobsByDate[date] : [];
@@ -67,7 +92,9 @@ export default function JobListLinearView({
           <Box
             key={date}
             sx={{
-              backgroundColor: isWeekend(date)
+              backgroundColor: isDashboard
+                ? colors.primary[400]
+                : isWeekend(date)
                 ? colors.sageGreen[800]
                 : colors.primary[400],
               boxShadow: `0 1px 3px ${colors.primary[800]}`,
@@ -83,12 +110,15 @@ export default function JobListLinearView({
               alignItems="center"
               justifyContent="space-between"
             >
-              <Typography
-                variant="h4"
-                sx={{ fontWeight: "bold", color: colors.sageGreen[500] }}
-              >
-                {date}
-              </Typography>
+              {/* Date header */}
+              {!isDashboard && (
+                <Typography
+                  variant="h4"
+                  sx={{ fontWeight: "bold", color: colors.sageGreen[500] }}
+                >
+                  {date}
+                </Typography>
+              )}
 
               {/* Button group */}
               <Box>
@@ -114,7 +144,7 @@ export default function JobListLinearView({
                 display: "flex",
                 flexWrap: "wrap",
                 gap: 1.5,
-                mt: 1,
+                mt: isDashboard ? 0.5 : 1,
               }}
             >
               {jobs.length > 0 ? (
@@ -131,6 +161,7 @@ export default function JobListLinearView({
                     onEdit={() => onEdit(job)}
                     onDelete={() => onDelete(job.id)}
                     onCopy={() => onCopy(job)}
+                    isDashboard={isDashboard}
                   ></JobCard>
                 ))
               ) : (

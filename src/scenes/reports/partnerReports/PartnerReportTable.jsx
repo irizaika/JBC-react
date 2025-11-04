@@ -9,39 +9,36 @@ import {
   TableFooter,
   useTheme,
 } from "@mui/material";
-import { tokens } from "../../theme";
-import axios from "axios";
+import { tokens } from "../../../theme";
 
-const PartnerReport = ({ startDate, endDate }) => {
+const PartnerReportTable = ({ data }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [data, setData] = useState([]);
 
-  useEffect(() => {
-    const fetchReport = async () => {
-      console.log("Fetching report for dates:", startDate, endDate);
-      var sd = startDate?.format?.("YYYY-MM-DD");
-      var ed = endDate?.format?.("YYYY-MM-DD");
-      console.log("Fetching report for dates:", sd, ed);
+  // Compute totals & profits
+  const enrichedData = useMemo(() => {
+    return (data || []).map((row) => ({
+      ...row,
+      profit: row.totalPayReceived - row.totalContractorCost,
+    }));
+  }, [data]);
 
-      const response = await axios.get(
-        `https://localhost:7176/api/reports/partner-summary`,
-        {
-          params: { startDate: sd, endDate: ed },
-        }
-      );
-      setData(response.data);
-    };
-    fetchReport();
-  }, [startDate, endDate]);
+  // // Sort for highlighting top 3 profits
+  // const top3ByProfitIds = useMemo(() => {
+  //   const sorted = [...enrichedData].sort((a, b) => b.profit - a.profit);
+  //   return sorted.slice(0, 3).map((r) => r.partnerId);
+  // }, [enrichedData]);
 
-  // 🧮 Compute totals and averages
+  // Summary row
   const summary = useMemo(() => {
     if (data.length === 0) return null;
 
     const totalJobs = data.reduce((sum, x) => sum + x.totalJobs, 0);
     const totalPay = data.reduce((sum, x) => sum + x.totalPayReceived, 0);
-    const totalContractor = data.reduce((sum, x) => sum + x.totalContractorCost, 0);
+    const totalContractor = data.reduce(
+      (sum, x) => sum + x.totalContractorCost,
+      0
+    );
     const totalProfit = totalPay - totalContractor;
 
     return {
@@ -53,11 +50,38 @@ const PartnerReport = ({ startDate, endDate }) => {
     };
   }, [data]);
 
+  const getRowColor = (row) => {
+    // const name = row.partnerName?.toLowerCase() ?? "";
+    // if (name.includes("unassigned")) {
+    //   return colors.burntOrange[800];
+    // }
+
+    // if (top3ByProfitIds.includes(row.partnerId)) {
+    //   const rank = top3ByProfitIds.indexOf(row.partnerId);
+    //   switch (rank) {
+    //     case 0:
+    //       return theme.palette.mode === "dark"
+    //         ? "#1b5e20"
+    //         : "#a5d6a7"; // dark or light green
+    //     case 1:
+    //       return theme.palette.mode === "dark"
+    //         ? "#f9a825"
+    //         : "#fff59d"; // gold/yellow
+    //     case 2:
+    //       return theme.palette.mode === "dark"
+    //         ? "#ef6c00"
+    //         : "#ffcc80"; // orange
+    //     default:
+    //       return "inherit";
+    //   }
+    // }
+
+    return "inherit";
+  };
+
   return (
     <Box sx={{ p: 3 }}>
-
-
-      <Table size="small" sx={{ mt: 3 }}>
+      <Table size="small" sx={{ mt: 0}}>
         <TableHead>
           <TableRow sx={{ fontWeight: "bold" }}>
             <TableCell sx={{ color: colors.grey[100] }}>Partner</TableCell>
@@ -80,9 +104,22 @@ const PartnerReport = ({ startDate, endDate }) => {
         </TableHead>
 
         <TableBody>
-          {data.map((row) => (
-            <TableRow key={row.partnerId}>
-              <TableCell>{row.partnerName}</TableCell>
+          {enrichedData.map((row) => (
+            <TableRow
+              key={`${row.partnerId}-${row.partnerName}`}
+              // sx={{
+              //   backgroundColor: getRowColor(row),
+              //   "&:nth-of-type(odd)": {
+              //     backgroundColor:
+              //       getRowColor(row) === "inherit"
+              //         ? colors.primary[500]
+              //         : getRowColor(row),
+              //   },
+              // }}
+            >
+              <TableCell sx={{ fontWeight: "bold" }}>
+                {row.partnerName}
+              </TableCell>
               <TableCell align="right">{row.totalJobs}</TableCell>
               <TableCell align="right">
                 £{row.totalPayReceived.toFixed(2)}
@@ -91,19 +128,28 @@ const PartnerReport = ({ startDate, endDate }) => {
                 £{row.totalContractorCost.toFixed(2)}
               </TableCell>
               <TableCell align="right">
-                £{(row.totalPayReceived - row.totalContractorCost).toFixed(2)}
+                £{row.profit.toFixed(2)}
               </TableCell>
               <TableCell align="right">
-                £{(row.totalPayReceived / row.totalJobs).toFixed(2)}
+                £
+                {row.totalJobs > 0
+                  ? (row.totalPayReceived / row.totalJobs).toFixed(2)
+                  : "0.00"}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
 
-        {/* ✅ Summary row */}
         {summary && (
           <TableFooter>
-            <TableRow sx={{ fontWeight : "bold", borderTop: `2px solid ${colors.grey[500]}` }}>
+            <TableRow
+              sx={{
+                fontWeight: "bold",
+                borderTop: `2px solid ${colors.grey[500]}`,
+                borderBottom: `0px`,
+              //  backgroundColor: colors.primary[600],
+              }}
+            >
               <TableCell sx={{ fontWeight: "bold" }}>TOTAL</TableCell>
               <TableCell align="right" sx={{ fontWeight: "bold" }}>
                 {summary.totalJobs}
@@ -128,4 +174,4 @@ const PartnerReport = ({ startDate, endDate }) => {
   );
 };
 
-export default PartnerReport;
+export default PartnerReportTable;

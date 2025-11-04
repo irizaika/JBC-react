@@ -221,8 +221,15 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Partner report"
-              to="/partnerDonutReport"
-              icon={<AssignmentIcon />}
+              to="/partnerReport"
+              icon={<PieChartOutlineOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            ></Item>
+            <Item
+              title="Contractor report"
+              to="/contractorReport"
+              icon={<BarChartOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             ></Item>
