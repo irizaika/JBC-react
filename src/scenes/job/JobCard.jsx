@@ -105,7 +105,7 @@ export default function JobCard({
         py: 1,
         borderRadius: 1,
         backgroundColor: isWeekend(job.date)
-          ? colors.sageGreen[800]
+          ? colors.grey[800]
           : colors.primary[400],
         boxShadow: `0 3px 7px ${colors.primary[800]}`,
         "&:hover": {

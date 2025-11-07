@@ -17,7 +17,7 @@ import BarChart from "../../../components/BarChart"
 dayjs.extend(isoWeek);
 dayjs.locale("en-gb"); // UK locale, week starts on Monday
 
-const PartnersJobReport = () => {
+const PartnersJobReport = ({isDashboard = false}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 

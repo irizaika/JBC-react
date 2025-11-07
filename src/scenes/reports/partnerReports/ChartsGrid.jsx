@@ -3,7 +3,7 @@ import { Grid, Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../../theme";
 import PieChart from "../../../components/PieChart"; 
 
-const ChartsGrid = ({ charts = []}) => {
+const ChartsGrid = ({ isDashboard = false, charts = []}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 

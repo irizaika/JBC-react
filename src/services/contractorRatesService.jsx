@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7176/api/contractorPay"; // adjust to your API URL
+const API_URL = "https://localhost:7176/api/contractorPay"; 
 
 export const getContractorRates = async () => {
   const response = await axios.get(API_URL);

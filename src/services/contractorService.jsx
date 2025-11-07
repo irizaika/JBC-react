@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7176/api/contractor"; // adjust to your API URL
+const API_URL = "https://localhost:7176/api/contractor"; 
 
 export const getContractors = async () => {
   const response = await axios.get(API_URL);

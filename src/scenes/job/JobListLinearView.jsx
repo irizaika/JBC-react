@@ -57,7 +57,8 @@ export default function JobListLinearView({
       spacing={0.5}
       sx={{
         mt: isDashboard ? 0 : 2,
-        ...(isDashboard
+        ...(
+          isDashboard
           ? {
               // Dashboard mode — fit inside container, no scroll
               maxHeight: "unset",
@@ -66,7 +67,8 @@ export default function JobListLinearView({
               height: "auto",
               p: 0,
             }
-          : {
+          : 
+          {
               // Normal jobs page
               maxHeight: "75vh",
               overflowY: "auto",
@@ -95,9 +97,9 @@ export default function JobListLinearView({
               backgroundColor: isDashboard
                 ? colors.primary[400]
                 : isWeekend(date)
-                ? colors.sageGreen[800]
+                ? colors.grey[800]
                 : colors.primary[400],
-              boxShadow: `0 1px 3px ${colors.primary[800]}`,
+              boxShadow: isDashboard ? "none" : `0 1px 3px ${colors.primary[800]}`,
               color: colors.grey[100],
               borderRadius: 1,
               px: 2,
@@ -114,7 +116,7 @@ export default function JobListLinearView({
               {!isDashboard && (
                 <Typography
                   variant="h4"
-                  sx={{ fontWeight: "bold", color: colors.sageGreen[500] }}
+                  sx={{ fontWeight: "bold", color: colors.grey[300] }}
                 >
                   {date}
                 </Typography>
