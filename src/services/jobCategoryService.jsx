@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7176/api/jobCategory"; // adjust to your API URL
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL = `${BASE_URL}/jobCategory`;
 
 export const getJobCategories = async () => {
   const response = await axios.get(API_URL);

@@ -14,19 +14,26 @@ const LineChart = ({  data = [], isDashboard = false }) => {
           domain: {
             line: { stroke: colors.grey[100] },
           },
-            legend: {
+          legend: {
             text: { fill: colors.grey[100] },
           },
-          ticks: {  
+          ticks: {
             line: { stroke: colors.grey[100], strokeWidth: 1 },
             text: { fill: colors.grey[100] },
           },
         },
         legends: {
-          text: { fill: colors.grey[100]
-          }
+          text: { fill: colors.grey[100] },
         },
-        tooltip: { background: colors.primary[500]}
+        tooltip: {
+          container: {
+            background: colors.primary[400],
+            color: colors.grey[100],
+            fontSize: 14,
+            borderRadius: 6,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+          },
+        },
       }}
       colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }}
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -38,8 +45,15 @@ const LineChart = ({  data = [], isDashboard = false }) => {
         reverse: false,
       }}
       curve="catmullRom"
-      axisBottom={{ legend: isDashboard ? undefined : "transportation", legendOffset: 36 }}
-      axisLeft={{ legend:  isDashboard ? undefined : "count", legendOffset: -40, tickValues: 5 }}
+      axisBottom={{
+        legend: isDashboard ? undefined : "transportation",
+        legendOffset: 36,
+      }}
+      axisLeft={{
+        legend: isDashboard ? undefined : "count",
+        legendOffset: -40,
+        tickValues: 5,
+      }}
       enableGridX={false}
       enableGridY={false}
       pointSize={10}

@@ -12,7 +12,7 @@ export const tokens = (mode) => ({
           500: "#A5A29C",
           600: "#8E8B87",
           700: "#73706C",
-          800: "#5A5855",
+          800: "#2C2F33", //5A5855
           900: "#3E3C39",
         },
         primary: {
@@ -64,7 +64,7 @@ export const tokens = (mode) => ({
         // light mode version: invert etc
         grey: {
           100: "#3E3C39",
-          200: "#5A5855",
+          200: "#2C2F33", //5A5855
           300: "#73706C",
           400: "#8E8B87",
           500: "#A5A29C",

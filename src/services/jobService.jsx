@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7176/api/job";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL = `${BASE_URL}/job`;
 
 export const getJobsByRange = async (startDate, endDate) => {
   const response = await axios.get(`${API_URL}/range?start=${startDate.format("YYYY-MM-DD")}&end=${endDate.format("YYYY-MM-DD")}`);

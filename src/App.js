@@ -16,6 +16,8 @@ import RoleRates from "./scenes/roleRate";
 import ContractorRates from "./scenes/contractorRate";
 import PartnersJobReport from "./scenes/reports/partnerReports";
 import ContractorReport from "./scenes/reports/contractorReport";
+import JobReport from "./scenes/reports/jobReport";
+
 function App() {
 
   const [theme, colorMode] = useMode();
@@ -41,6 +43,7 @@ function App() {
               <Route path="/contractorRate" element={<ContractorRates />} />
               <Route path="/partnerReport" element={<PartnersJobReport />} />
               <Route path="/contractorReport" element={<ContractorReport />} />
+              <Route path="/jobReport" element={<JobReport />} />
             </Routes>
           </main>
         </div>

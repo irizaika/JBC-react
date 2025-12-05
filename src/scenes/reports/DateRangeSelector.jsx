@@ -4,12 +4,11 @@ import {
   Box,
   Button,
   Stack,
-  useTheme,
   Divider,
   Checkbox,
-  Typography,
-  FormControlLabel
+  FormControlLabel,
 } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,66 +17,98 @@ import "dayjs/locale/en-gb";
 import isoWeek from "dayjs/plugin/isoWeek";
 
 dayjs.extend(isoWeek);
-dayjs.locale("en-gb"); // UK locale, week starts on Monday
+dayjs.locale("en-gb");
 
-const shortcutsItems = [
-  {
-    label: "This Week",
-    getValue: () => {
-      const today = dayjs();
-      return [today.startOf("week"), today.endOf("week")];
-    },
-  },
-  {
-    label: "Last Week",
-    getValue: () => {
-      const today = dayjs();
-      const prevWeek = today.subtract(1, "week");
-      return [prevWeek.startOf("week"), prevWeek.endOf("week")];
-    },
-  },
-  {
-    label: "Current Month",
-    getValue: () => {
-      const today = dayjs();
-      return [today.startOf("month"), today.endOf("month")];
-    },
-  },
-  {
-    label: "Previous Month",
-    getValue: () => {
-      const today = dayjs();
-      const prevMonth = today.add(-1, "month");
-      return [prevMonth.startOf("month"), prevMonth.endOf("month")];
-    },
-  },
-  { label: "Reset", getValue: () => [null, null] },
-];
-
-export default function DateRangeSelector({ onChange }) {
+export default function DateRangeSelector({
+  onChange,
+  displayCombineNoPartner = true,
+}) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [startDate, setStartDate] = useState(dayjs().subtract(7, "day"));
-  const [endDate, setEndDate] = useState(dayjs());
+  const [rangeType, setRangeType] = useState("week"); // "week" | "month" | "year"
   const [combineNoPartner, setCombineNoPartner] = useState(true);
 
-  const handleShortcutClick = (getValue) => {
-    const [start, end] = getValue();
-    setStartDate(start);
-    setEndDate(end);
-    if (onChange) onChange([start, end, combineNoPartner]);
+  // ------ INITIAL RANGE (Default: current week) ------
+  const getCurrentRange = (type) => {
+    const today = dayjs();
+    switch (type) {
+      case "month":
+        return [today.startOf("month"), today.endOf("month")];
+      case "year":
+        return [today.startOf("year"), today.endOf("year")];
+      default:
+        return [today.startOf("week"), today.endOf("week")];
+    }
   };
 
-  const handleStartChange = (newValue) => {
-    setStartDate(newValue);
-    if (onChange) onChange([newValue, endDate, combineNoPartner]);
+  const [startDate, setStartDate] = useState(getCurrentRange("week")[0]);
+  const [endDate, setEndDate] = useState(getCurrentRange("week")[1]);
+
+  // ------ UPDATE CALLBACK ------
+  const updateParent = (s, e, combined = combineNoPartner) => {
+    if (onChange) onChange([s, e, combined]);
   };
 
-  const handleEndChange = (newValue) => {
-    setEndDate(newValue);
-    if (onChange) onChange([startDate, newValue, combineNoPartner]);
+  // ------ SET CURRENT RANGE (When clicking Week/Month/Year) ------
+  const handleRangeSelect = (type) => {
+    setRangeType(type);
+    const [s, e] = getCurrentRange(type);
+    setStartDate(s);
+    setEndDate(e);
+    updateParent(s, e);
   };
+
+  // ------ NAVIGATION (< or >) ------
+  const shiftRange = (direction) => {
+    const amount = direction === "prev" ? -1 : 1;
+
+    let newStart, newEnd;
+
+    if (rangeType === "week") {
+      newStart = startDate.add(amount, "week");
+      newEnd = endDate.add(amount, "week");
+    } else if (rangeType === "month") {
+      newStart = startDate.add(amount, "month").startOf("month");
+      newEnd = startDate.add(amount, "month").endOf("month");
+    } else {
+      newStart = startDate.add(amount, "year").startOf("year");
+      newEnd = startDate.add(amount, "year").endOf("year");
+    }
+
+    setStartDate(newStart);
+    setEndDate(newEnd);
+    updateParent(newStart, newEnd);
+  };
+
+//week, mont,year button styles
+  const rangeButtonBase = {
+    backgroundColor: colors.grey[800],
+    color: colors.grey[100],
+    fontSize: "0.7rem",
+    //  fontWeight: "bold",
+    textTransform: "none",
+    px: 1.5,
+    py: 0.5,
+    "&:hover": {
+      // color: colors.burntOrange[600],
+      backgroundColor: colors.grey[700],
+      // fontWeight: "bold",
+    },
+  };
+
+
+const getRangeButtonStyle = (selected) => ({
+  ...rangeButtonBase,
+  backgroundColor: selected ? colors.grey[600] : colors.grey[800],
+  color: colors.grey[100],
+  "&:hover": {
+    backgroundColor: selected ? colors.grey[500] : colors.grey[600],
+    cursor: "pointer",
+  },
+  // Remove all outline / elevation
+  //boxShadow: "none",
+});
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -86,47 +117,30 @@ export default function DateRangeSelector({ onChange }) {
         alignItems="center"
         justifyContent="flex-start"
         flexWrap="wrap"
-        // gap={2}
         sx={{
           p: 2,
-          mr: 1, // space from right edge works better than gap here
+          mr: 1,
           borderRadius: 2,
           bgcolor: colors.primary[400],
           color: colors.grey[100],
           boxShadow: `0 2px 8px ${colors.primary[800]}`,
         }}
       >
-        {/* --- Date Pickers --- */}
+        {/* ----- DATE PICKERS ----- */}
         <Stack direction="row" spacing={2}>
           <DatePicker
             label="Start Date"
             value={startDate}
-            onChange={handleStartChange}
+            onChange={(newValue) => {
+              setStartDate(newValue);
+              updateParent(newValue, endDate);
+            }}
             format="YYYY-MM-DD"
             slotProps={{
               textField: {
                 sx: {
                   width: 160,
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: colors.sageGreen[400],
-                    },
-                    "&:hover fieldset": {
-                      borderColor: colors.sageGreen[500],
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: colors.burntOrange[400],
-                    },
-                    input: {
-                      color: colors.grey[100],
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: colors.grey[300],
-                  },
-                  "& .MuiSvgIcon-root": {
-                    color: colors.grey[100],
-                  },
+                  "& .MuiOutlinedInput-root input": { color: colors.grey[100] },
                 },
               },
             }}
@@ -134,32 +148,16 @@ export default function DateRangeSelector({ onChange }) {
           <DatePicker
             label="End Date"
             value={endDate}
-            onChange={handleEndChange}
+            onChange={(newValue) => {
+              setEndDate(newValue);
+              updateParent(startDate, newValue);
+            }}
             format="YYYY-MM-DD"
             slotProps={{
               textField: {
                 sx: {
                   width: 160,
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: colors.sageGreen[400],
-                    },
-                    "&:hover fieldset": {
-                      borderColor: colors.sageGreen[500],
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: colors.burntOrange[400],
-                    },
-                    input: {
-                      color: colors.grey[100],
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: colors.grey[300],
-                  },
-                  "& .MuiSvgIcon-root": {
-                    color: colors.grey[100],
-                  },
+                  "& .MuiOutlinedInput-root input": { color: colors.grey[100] },
                 },
               },
             }}
@@ -169,51 +167,110 @@ export default function DateRangeSelector({ onChange }) {
         <Divider
           orientation="vertical"
           flexItem
-          sx={{ borderColor: colors.grey[400], mx: 1 }}
+          sx={{ borderColor: colors.grey[400], mx: 2 }}
         />
 
-        {/* --- Shortcut Buttons --- */}
-        <Stack direction="row" spacing={1} flexWrap="wrap">
-          {shortcutsItems.map((item) => (
-            <Button
-              key={item.label}
-              variant="contained"
-              onClick={() => handleShortcutClick(item.getValue)}
-              sx={{
-                backgroundColor: colors.primary[400],
+        {/* ----- WEEK / MONTH / YEAR SWITCH ----- */}
+        <Stack direction="row" spacing={1} alignItems="center">
+          {/* Prev button */}
+          <Button
+            variant="contained"
+            onClick={() => shiftRange("prev")}
+            sx={{
+                backgroundColor: colors.grey[800],
                 color: colors.grey[100],
                 fontSize: "0.7rem",
-                //  fontWeight: "bold",
+              //  fontWeight: "bold",
                 textTransform: "none",
                 px: 1.5,
                 py: 0.5,
                 "&:hover": {
-                  color: colors.burntOrange[500],
+                 // color: colors.burntOrange[600],
+                  backgroundColor: colors.grey[700],
+                 // fontWeight: "bold",
+                },
+            }}
+          >
+            {"<"}
+          </Button>
+
+          {/* Week */}
+          <Button
+            variant="contained"
+            onClick={() => handleRangeSelect("week")}
+            sx={getRangeButtonStyle(rangeType === "week")}
+          >
+            Week
+          </Button>
+
+          {/* Month */}
+          <Button
+            variant="contained"
+            onClick={() => handleRangeSelect("month")}
+            sx={getRangeButtonStyle(rangeType === "month")}
+          >
+            Month
+          </Button>
+
+          {/* Year */}
+          <Button
+            variant="contained"
+            onClick={() => handleRangeSelect("year")}
+            sx={getRangeButtonStyle(rangeType === "year")}
+          >
+            Year
+          </Button>
+
+          {/* Next button */}
+          <Button
+            variant="contained"
+            onClick={() => shiftRange("next")}
+            // sx={{
+            //   minWidth: 40,
+            //   backgroundColor: colors.primary[600],
+            // }}
+            sx={{
+                backgroundColor: colors.grey[800],
+                color: colors.grey[100],
+                fontSize: "0.7rem",
+              //  fontWeight: "bold",
+                textTransform: "none",
+                px: 1.5,
+                py: 0.5,
+                "&:hover": {
+                 // color: colors.burntOrange[600],
+                  backgroundColor: colors.grey[700],
+                 // fontWeight: "bold",
                 },
               }}
-            >
-              {item.label}
-            </Button>
-          ))}
+          >
+            {">"}
+          </Button>
         </Stack>
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ borderColor: colors.grey[400], mx: 1 }}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={combineNoPartner}
-              onChange={(e) => {
-                const newValue = e.target.checked;
-                setCombineNoPartner(newValue);
-                if (onChange) onChange([startDate, endDate, newValue]); 
-              }}
+
+        {/* ---- Combine checkbox ---- */}
+        {displayCombineNoPartner && (
+          <>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ borderColor: colors.grey[400], mx: 2 }}
             />
-          }
-          label="Combine custom jobs"
-        />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={combineNoPartner}
+                  onChange={(e) => {
+                    const val = e.target.checked;
+                    setCombineNoPartner(val);
+                    updateParent(startDate, endDate, val);
+                  }}
+                />
+              }
+              label="Combine custom jobs"
+            />
+          </>
+        )}
       </Box>
     </LocalizationProvider>
   );

@@ -6,7 +6,8 @@ import axios from "axios";
 import dayjs from "dayjs";
 import StatGrid from "./StatGrid";
 
-const API_URL = "https://localhost:7176/api/dashboard";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL = `${BASE_URL}/dashboard`;
 
 const DetailedContractorStats = () => {
   const theme = useTheme();
@@ -15,6 +16,7 @@ const DetailedContractorStats = () => {
 
   const start = dayjs().startOf("month").format("YYYY-MM-DD");
   const end = dayjs().endOf("month").format("YYYY-MM-DD");
+  const monthName = dayjs().startOf("month").format("MMMM");
 
   useEffect(() => {
     const load = async () => {
@@ -49,7 +51,7 @@ const DetailedContractorStats = () => {
         {/* Contractors list */}
         <Box flex={1} overflow="auto" display="flex" flexDirection="column" gap="8px">
           <Typography variant="subtitle1" sx={{ color: colors.burntOrange[500], mb: "4px" }}>
-            Contractors
+            Contractors  stats in {monthName}
           </Typography>
           {contractorStats.map((c) => (
             <StatGrid

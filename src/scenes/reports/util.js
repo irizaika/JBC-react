@@ -58,3 +58,29 @@ export const transformContractorPartnerBarData = (data) => {
     })
   };
 };
+
+export function transformJobSummaryToNivo(data) {
+  if (!data || !Array.isArray(data)) return [];
+
+  const result = {
+ //   TotalJobs: [],
+    TotalReceived: [],
+    TotalPaidToContractors: [],
+    Profit: []
+  };
+
+  data.forEach(item => {
+  //  const xLabel = item.period; // or use item.date if you want formatted date
+
+  //  result.TotalJobs.push({ x: item.key, y: item.totalJobs });
+    result.TotalReceived.push({ x: item.key, y: item.totalReceived });
+    result.TotalPaidToContractors.push({ x: item.key, y: item.totalPaidToContractors });
+    result.Profit.push({ x: item.key, y: item.profit });
+  });
+
+  return Object.keys(result).map(key => ({
+    id: key,
+    data: result[key]
+  }));
+}
+

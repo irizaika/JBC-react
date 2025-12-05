@@ -27,12 +27,14 @@ const ContractorReport = () => {
   const [barData, setBarData] = useState([]);
   const [keysForBarData, setKeysForBarData] = useState([]);
   
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL = `${BASE_URL}/reports/contractors`;
 
   useEffect(() => {
     const fetchReport = async () => {
       const sd = startDate.format("YYYY-MM-DD");
       const ed = endDate.format("YYYY-MM-DD");
-      const { data: result } = await axios.get("https://localhost:7176/api/reports/contractors", {
+      const { data: result } = await axios.get(API_URL, {
         params: { startDate: sd, endDate: ed, combineNoPartner },
       });
 
@@ -57,7 +59,7 @@ const ContractorReport = () => {
       <Grid sx={{ p: 2 }}>
         <DateRangeSelector onChange={handleDateRangeChange} />
         <Box
-          height={"85vh"}
+          height={"87vh"}
           // display="flex"
           alignItems="center"
           justifyContent="flex-start"
@@ -65,7 +67,7 @@ const ContractorReport = () => {
           gap={2}
           sx={{
             mt: 2,
-            maxHeight: "75vh", //
+            maxHeight: "77vh", //
             overflowY: "auto", // Enables vertical scroll
             overflowX: "hidden",
             pr: 1, // Avoids scrollbar overlapping content

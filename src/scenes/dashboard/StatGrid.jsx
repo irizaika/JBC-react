@@ -15,7 +15,7 @@ const StatGrid = ({ title, subtitle, icon, progress, increase }) => {
       p="10px 12px"
       borderRadius="12px"
       minWidth="250px"
-      height="55px"
+      height="45px"
       boxShadow={1}
     >
       <Box display="flex" alignItems="center" gap="10px">
@@ -34,8 +34,8 @@ const StatGrid = ({ title, subtitle, icon, progress, increase }) => {
         <Typography variant="h6" sx={{ color: colors.sageGreen[400], fontWeight: "bold" }}>
           {title}
         </Typography>
-        <Box width="32px" height="32px">
-          <ProgressCircle progress={progress} size="32" />
+        <Box width="32px" height="28px">
+          <ProgressCircle progress={progress} size="28" />
         </Box>
       </Box>
     </Box>

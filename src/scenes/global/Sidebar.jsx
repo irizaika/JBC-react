@@ -25,6 +25,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import PaymentsIcon from '@mui/icons-material/Payments';
+import ViewCompactIcon from '@mui/icons-material/ViewCompact';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -230,6 +231,13 @@ const Sidebar = () => {
               title="Contractor report"
               to="/contractorReport"
               icon={<BarChartOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            ></Item>
+            <Item
+              title="Job report"
+              to="/jobReport"
+              icon={<ViewCompactIcon />}
               selected={selected}
               setSelected={setSelected}
             ></Item>

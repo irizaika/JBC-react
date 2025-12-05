@@ -18,6 +18,7 @@
     "@mui/x-date-pickers-pro": "^8.14.1",
     "@nivo/axes": "^0.99.0",
     "@nivo/bar": "^0.99.0",
+    "@nivo/calendar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/geo": "^0.99.0",
     "@nivo/line": "^0.99.0",

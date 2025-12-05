@@ -1,18 +1,12 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7176/api/partner"; // adjust to your API URL
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL = `${BASE_URL}/partner`;
 
 export const getPartners = async () => {
   const response = await axios.get(API_URL);
   return response.data;
 };
-
-
-//not used
-// export const getPartner = async (id) => {
-//   const response = await axios.get(`${API_URL}/${id}`);
-//   return response.data;
-// };
 
 export const createPartner = async (partner) => {
   const response = await axios.post(API_URL, partner);
