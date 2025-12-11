@@ -3,11 +3,22 @@ import { ColorModeContext/*, tokens*/ } from "../../theme";
 import { useContext } from "react";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import { Logout } from "@mui/icons-material";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Topbar = () => {
   const theme = useTheme();
  // const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <Box
@@ -23,6 +34,10 @@ const Topbar = () => {
         ) : (
           <DarkModeOutlinedIcon />
         )}
+      </IconButton>
+      {/* Logout button */}
+      <IconButton onClick={handleLogout} title="Logout">
+        <Logout />
       </IconButton>
     </Box>
   );
